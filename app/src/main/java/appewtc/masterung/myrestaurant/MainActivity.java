@@ -19,7 +19,17 @@ public class MainActivity extends ActionBarActivity {
         objUserTABLE = new UserTABLE(this);
         objOrderTABLE = new OrderTABLE(this);
 
+        //Tester
+        testAddValue();
+
     }   // onCreate
+
+    private void testAddValue() {
+
+        objUserTABLE.addValueToUser("User", "Password", "Officer");
+        objOrderTABLE.addValueOrder("Officer", "Date", "Food", 4);
+
+    }   // testAddValue
 
 
     @Override
