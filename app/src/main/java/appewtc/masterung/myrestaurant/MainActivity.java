@@ -1,9 +1,25 @@
 package appewtc.masterung.myrestaurant;
 
-import android.support.v7.app.ActionBarActivity;
+import android.database.sqlite.SQLiteDatabase;
+import android.os.Build;
 import android.os.Bundle;
+import android.os.StrictMode;
+import android.support.v7.app.ActionBarActivity;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
+
+import org.apache.http.HttpEntity;
+import org.apache.http.HttpResponse;
+import org.apache.http.client.HttpClient;
+import org.apache.http.client.methods.HttpPost;
+import org.apache.http.impl.client.DefaultHttpClient;
+import org.json.JSONArray;
+import org.json.JSONObject;
+
+import java.io.BufferedReader;
+import java.io.InputStream;
+import java.io.InputStreamReader;
 
 
 public class MainActivity extends ActionBarActivity {
@@ -20,9 +36,89 @@ public class MainActivity extends ActionBarActivity {
         objOrderTABLE = new OrderTABLE(this);
 
         //Tester
-        testAddValue();
+       // testAddValue();
+
+        //delete All Data
+        deleteAllData();
+
+        //synJsonToSQLte
+        synJSonToSQLite();
 
     }   // onCreate
+
+    private void deleteAllData() {
+
+        SQLiteDatabase objSQLite = openOrCreateDatabase("Restaurant.db", MODE_PRIVATE, null);
+        objSQLite.delete("userTABLE", null, null);
+
+
+    }   // deleteAllData
+
+    private void synJSonToSQLite() {
+
+        //setUp Policy
+        if (Build.VERSION.SDK_INT > 9) {
+            StrictMode.ThreadPolicy myPolicy = new StrictMode.ThreadPolicy.Builder().permitAll().build();
+            StrictMode.setThreadPolicy(myPolicy);
+        }   // if
+
+        InputStream objInputStream = null;
+        String strJSON = "";
+
+        //Create objInputStream
+        try {
+
+            HttpClient objHttpClient = new DefaultHttpClient();
+            HttpPost objHttpPost = new HttpPost("http://swiftcodingthai.com/rest/php_get_data.php");
+            HttpResponse objHttpResponse = objHttpClient.execute(objHttpPost);
+            HttpEntity objHttpEntity = objHttpResponse.getEntity();
+            objInputStream = objHttpEntity.getContent();
+
+        } catch (Exception e) {
+            Log.d("Restaurant", "Error from InputStream ==> " + e.toString());
+        }
+
+
+        //Change InputStream to String
+        try {
+
+            BufferedReader objBufferedReader = new BufferedReader(new InputStreamReader(objInputStream, "UTF-8"));
+            StringBuilder objStringBuilder = new StringBuilder();
+            String strLine = null;
+
+            while ((strLine = objBufferedReader.readLine()) != null ) {
+                objStringBuilder.append(strLine);
+            }   // while
+
+            objInputStream.close();
+            strJSON = objStringBuilder.toString();
+
+        } catch (Exception e) {
+            Log.d("Restaurant", "Error Create String ==> " + e.toString());
+        }
+
+
+        //Up Value to SQLite
+        try {
+
+            final JSONArray objJSONArray = new JSONArray(strJSON);
+            for (int i = 0; i < objJSONArray.length(); i++) {
+
+                JSONObject objJSONObject = objJSONArray.getJSONObject(i);
+                String strUser = objJSONObject.getString("User");
+                String strPassword = objJSONObject.getString("Password");
+                String strOfficer = objJSONObject.getString("Officer");
+
+                long insertVale = objUserTABLE.addValueToUser(strUser, strPassword, strOfficer);
+
+            }   // for
+
+        } catch (Exception e) {
+            Log.d("Restaurant", "Error Up Value ==> " + e.toString());
+        }
+
+
+    }   // synJsonToSQLite
 
     private void testAddValue() {
 
