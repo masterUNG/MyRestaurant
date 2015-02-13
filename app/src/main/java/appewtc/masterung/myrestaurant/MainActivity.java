@@ -8,6 +8,8 @@ import android.support.v7.app.ActionBarActivity;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
+import android.widget.EditText;
 
 import org.apache.http.HttpEntity;
 import org.apache.http.HttpResponse;
@@ -26,11 +28,16 @@ public class MainActivity extends ActionBarActivity {
 
     private UserTABLE objUserTABLE;
     private OrderTABLE objOrderTABLE;
+    private EditText edtUser, edtPassword;
+    private String strUserChoose, strPasswordChoose;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+
+        //Bind Widget
+        bindWidget();
 
         objUserTABLE = new UserTABLE(this);
         objOrderTABLE = new OrderTABLE(this);
@@ -45,6 +52,30 @@ public class MainActivity extends ActionBarActivity {
         synJSonToSQLite();
 
     }   // onCreate
+
+    public void clickLogin(View view) {
+
+        strUserChoose = edtUser.getText().toString().trim();
+        strPasswordChoose = edtPassword.getText().toString().trim();
+
+        if (strUserChoose.equals("") || strPasswordChoose.equals("") ) {
+
+            //Alert Error
+            MyAlertDialog objMyAlert = new MyAlertDialog();
+            objMyAlert.errorDialog(MainActivity.this, "Have Space", "Please Fill in Every Blank");
+
+        } else {
+
+
+
+        } // if
+
+    }   // clickLogin
+
+    private void bindWidget() {
+        edtUser = (EditText) findViewById(R.id.editText);
+        edtPassword = (EditText) findViewById(R.id.editText2);
+    }   // bindWidget
 
     private void deleteAllData() {
 
