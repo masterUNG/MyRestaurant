@@ -1,5 +1,8 @@
 package appewtc.masterung.myrestaurant;
 
+import android.app.AlertDialog;
+import android.content.DialogInterface;
+import android.content.Intent;
 import android.database.sqlite.SQLiteDatabase;
 import android.os.Build;
 import android.os.Bundle;
@@ -29,7 +32,7 @@ public class MainActivity extends ActionBarActivity {
     private UserTABLE objUserTABLE;
     private OrderTABLE objOrderTABLE;
     private EditText edtUser, edtPassword;
-    private String strUserChoose, strPasswordChoose;
+    private String strUserChoose, strPasswordChoose, strPasswordTrue, strName;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -66,11 +69,67 @@ public class MainActivity extends ActionBarActivity {
 
         } else {
 
-
+            checkUser();
 
         } // if
 
     }   // clickLogin
+
+    private void checkUser() {
+
+        try {
+
+            String strData[] = objUserTABLE.searchUser(strUserChoose);
+            strPasswordTrue = strData[2];
+            strName = strData[3];
+
+            Log.d("Restaurant", "Wellcom " + strName);
+
+            checkPassword();
+
+        } catch (Exception e) {
+            MyAlertDialog objMyAlert = new MyAlertDialog();
+            objMyAlert.errorDialog(MainActivity.this, "No This User", "NO " + strUserChoose + " in my Database");
+        }
+
+    }   // checkUser
+
+    private void checkPassword() {
+
+        if (strPasswordChoose.equals(strPasswordTrue)) {
+
+            //Intent to Order Activity
+            wellcomeUser();
+
+        } else {
+
+            MyAlertDialog objMyAlert = new MyAlertDialog();
+            objMyAlert.errorDialog(MainActivity.this, "Password False", "Please Try agains Password False");
+
+        }
+
+    }   // checkPassword
+
+    private void wellcomeUser() {
+
+        final AlertDialog.Builder objAlert = new AlertDialog.Builder(this);
+        objAlert.setIcon(R.drawable.friend);
+        objAlert.setTitle("Wellcome to My Restaurant");
+        objAlert.setMessage("Wellcome " + strName + "\n" + "To My Restaurant");
+        objAlert.setCancelable(false);
+        objAlert.setPositiveButton("OK", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+
+                Intent objIntent = new Intent(MainActivity.this, OrderActivity.class);
+                objIntent.putExtra("Name", strName);
+                startActivity(objIntent);
+                finish();
+            }
+        });
+        objAlert.show();
+
+    }   // wellcomeUser
 
     private void bindWidget() {
         edtUser = (EditText) findViewById(R.id.editText);
