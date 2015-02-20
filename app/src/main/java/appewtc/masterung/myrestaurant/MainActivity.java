@@ -33,6 +33,7 @@ public class MainActivity extends ActionBarActivity {
     private OrderTABLE objOrderTABLE;
     private EditText edtUser, edtPassword;
     private String strUserChoose, strPasswordChoose, strPasswordTrue, strName;
+    private FoodTABLE objFoodTABLE;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -44,9 +45,10 @@ public class MainActivity extends ActionBarActivity {
 
         objUserTABLE = new UserTABLE(this);
         objOrderTABLE = new OrderTABLE(this);
+        objFoodTABLE = new FoodTABLE(this);
 
         //Tester
-       // testAddValue();
+        //testAddValue();
 
         //delete All Data
         deleteAllData();
@@ -159,7 +161,7 @@ public class MainActivity extends ActionBarActivity {
         try {
 
             HttpClient objHttpClient = new DefaultHttpClient();
-            HttpPost objHttpPost = new HttpPost("http://swiftcodingthai.com/rest/php_get_data.php");
+            HttpPost objHttpPost = new HttpPost("http://swiftcodingthai.com/rest/get_data_user_rest.php");
             HttpResponse objHttpResponse = objHttpClient.execute(objHttpPost);
             HttpEntity objHttpEntity = objHttpResponse.getEntity();
             objInputStream = objHttpEntity.getContent();
@@ -214,6 +216,7 @@ public class MainActivity extends ActionBarActivity {
 
         objUserTABLE.addValueToUser("User", "Password", "Officer");
         objOrderTABLE.addValueOrder("Officer", "Date", "Food", 4);
+        objFoodTABLE.addValueToFood("Food", "Price");
 
     }   // testAddValue
 

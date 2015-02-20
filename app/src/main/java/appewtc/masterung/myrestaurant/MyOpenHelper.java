@@ -15,6 +15,7 @@ public class MyOpenHelper extends SQLiteOpenHelper {
             + " User text, Password text, Officer text);";
     private static final String ORDER_TABLE = "create table orderTABLE (_id integer primary key, "
             + " Officer text, Date text, Food text, Item integer);";
+    private static final String FOOD_TABLE = "create table foodTABLE (_id integer primary key, "+" Food text, Price text);";
 
     public MyOpenHelper(Context context) {
         super(context, DATABASE_NAME, null, DATABASE_VERSION);
@@ -24,6 +25,7 @@ public class MyOpenHelper extends SQLiteOpenHelper {
     public void onCreate(SQLiteDatabase db) {
         db.execSQL(USER_TABLE);
         db.execSQL(ORDER_TABLE);
+        db.execSQL(FOOD_TABLE);
     }
 
     @Override
