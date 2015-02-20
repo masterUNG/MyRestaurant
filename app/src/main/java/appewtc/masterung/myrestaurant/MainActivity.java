@@ -142,6 +142,7 @@ public class MainActivity extends ActionBarActivity {
 
         SQLiteDatabase objSQLite = openOrCreateDatabase("Restaurant.db", MODE_PRIVATE, null);
         objSQLite.delete("userTABLE", null, null);
+        objSQLite.delete("foodTABLE", null, null);
 
 
     }   // deleteAllData
