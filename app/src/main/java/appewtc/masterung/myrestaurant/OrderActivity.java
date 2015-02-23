@@ -7,6 +7,7 @@ import android.os.Bundle;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.widget.ListView;
 
 import org.apache.http.HttpEntity;
 import org.apache.http.HttpResponse;
@@ -23,15 +24,49 @@ import java.io.InputStreamReader;
 
 public class OrderActivity extends ActionBarActivity {
 
+    //Explicit
+    private FoodTABLE objFoodTABLE;
+    private String[] strListFood, strListPrice;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_order);
 
+        objFoodTABLE = new FoodTABLE(this);
+
         //Synchronize JSON to SQLite
         synchronizeJSONtoFood();
 
+        //setup All Array
+        setupAllArray();
+
+        //Create ListView
+        createListView();
+
     }   // onCreate
+
+    private void createListView() {
+
+        int[] myTarget = {R.drawable.food1, R.drawable.food2, R.drawable.food3, R.drawable.food4, R.drawable.food5,
+                R.drawable.food6, R.drawable.food7, R.drawable.food8, R.drawable.food9, R.drawable.food10,
+                R.drawable.food11, R.drawable.food12, R.drawable.food13, R.drawable.food14, R.drawable.food15,
+                R.drawable.food16, R.drawable.food17, R.drawable.food18, R.drawable.food19, R.drawable.food20};
+
+        MyAdapter objMyadapter = new MyAdapter(getApplicationContext(), strListFood, strListPrice, myTarget);
+        ListView objListView = (ListView) findViewById(R.id.foodlistView);
+        objListView.setAdapter(objMyadapter);
+
+    }   // createListView
+
+    private void setupAllArray() {
+
+        strListFood = objFoodTABLE.listFood();
+        strListPrice = objFoodTABLE.listPrice();
+
+
+
+    }   // setupAllArray
 
     private void synchronizeJSONtoFood() {
 
@@ -63,7 +98,7 @@ public class OrderActivity extends ActionBarActivity {
             BufferedReader objBufferedReader = new BufferedReader(new InputStreamReader(objInputStream, "UTF-8"));
             StringBuilder objStringBuilder = new StringBuilder();
             String strLine = null;
-            while ((strLine = objBufferedReader.readLine()) != null ) {
+            while ((strLine = objBufferedReader.readLine()) != null) {
                 objStringBuilder.append(strLine);
             }   // while
             objInputStream.close();
@@ -81,14 +116,13 @@ public class OrderActivity extends ActionBarActivity {
                 JSONObject objJSONObject = objJSONArray.getJSONObject(i);
                 String strFood = objJSONObject.getString("Food");
                 String strPrice = objJSONObject.getString("Price");
-                FoodTABLE objFoodTABLE = new FoodTABLE(this);
+//                FoodTABLE objFoodTABLE = new FoodTABLE(this);
                 long valueFood = objFoodTABLE.addValueToFood(strFood, strPrice);
             }   // for
 
         } catch (Exception e) {
             Log.d("Restaurant", "Update SQLite ==> " + e.toString());
         }
-
 
 
     }   //synJSONtoFood
