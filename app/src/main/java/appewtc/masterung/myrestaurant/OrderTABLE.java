@@ -15,7 +15,7 @@ public class OrderTABLE {
     public static final String TABLE_ORDER = "orderTABLE";
     public static final String COLUMN_ID_ORDER = "_id";
     public static final String COLUMN_OFFICER = "Officer";
-    public static final String COLUMN_DATE = "Date";
+    public static final String COLUMN_DESK = "Desk";
     public static final String COLUMN_FOOD = "Food";
     public static final String COLUMN_ITEM = "Item";
 
@@ -31,7 +31,7 @@ public class OrderTABLE {
 
         ContentValues objContentValues = new ContentValues();
         objContentValues.put(COLUMN_OFFICER, strOfficer);
-        objContentValues.put(COLUMN_DATE, strDate);
+        objContentValues.put(COLUMN_DESK, strDate);
         objContentValues.put(COLUMN_FOOD, strFood);
         objContentValues.put(COLUMN_ITEM, intItem);
 
