@@ -14,18 +14,23 @@ import android.widget.AdapterView;
 import android.widget.EditText;
 import android.widget.ListView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import org.apache.http.HttpEntity;
 import org.apache.http.HttpResponse;
+import org.apache.http.NameValuePair;
 import org.apache.http.client.HttpClient;
+import org.apache.http.client.entity.UrlEncodedFormEntity;
 import org.apache.http.client.methods.HttpPost;
 import org.apache.http.impl.client.DefaultHttpClient;
+import org.apache.http.message.BasicNameValuePair;
 import org.json.JSONArray;
 import org.json.JSONObject;
 
 import java.io.BufferedReader;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.util.ArrayList;
 
 
 public class OrderActivity extends ActionBarActivity {
@@ -143,12 +148,46 @@ public class OrderActivity extends ActionBarActivity {
 
                 checkLog();
 
+                //up New Order to mySQL
+                upNewOrderToMySQL();
+
             }
         });
         AlertDialog obAlertDialog = objBuilder.create();
         obAlertDialog.show();
 
     }   // shwoChooseItem
+
+    private void upNewOrderToMySQL() {
+
+        //SetUP Policy
+        if (Build.VERSION.SDK_INT > 9) {
+            StrictMode.ThreadPolicy myPolicy = new StrictMode.ThreadPolicy.Builder().permitAll().build();
+            StrictMode.setThreadPolicy(myPolicy);
+        }
+
+        //Up Value
+        try {
+
+            ArrayList<NameValuePair> objNameValuePairs = new ArrayList<NameValuePair>();
+            objNameValuePairs.add(new BasicNameValuePair("isAdd", "true"));
+            objNameValuePairs.add(new BasicNameValuePair("Officer", strMyOfficer));
+            objNameValuePairs.add(new BasicNameValuePair("Desk", strMyDesk));
+            objNameValuePairs.add(new BasicNameValuePair("Food", strMyFood));
+            objNameValuePairs.add(new BasicNameValuePair("Amount", strItem));
+
+            HttpClient objHttpClient = new DefaultHttpClient();
+            HttpPost objHttpPost = new HttpPost("http://swiftcodingthai.com/rest/add_order_restaurant.php");
+            objHttpPost.setEntity(new UrlEncodedFormEntity(objNameValuePairs, "UTF-8"));
+            objHttpClient.execute(objHttpPost);
+
+            Toast.makeText(OrderActivity.this, "Update " + strMyFood, Toast.LENGTH_SHORT).show();
+
+        } catch (Exception e) {
+            Log.d("order", "Updata mySQL ===> " + e.toString());
+        }
+
+    }   // upNewOrder
 
     private void checkLog() {
         Log.d("order", "Officer ==> " + strMyOfficer);
