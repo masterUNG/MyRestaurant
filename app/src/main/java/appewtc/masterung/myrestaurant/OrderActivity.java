@@ -1,5 +1,7 @@
 package appewtc.masterung.myrestaurant;
 
+import android.app.AlertDialog;
+import android.content.DialogInterface;
 import android.os.Build;
 import android.os.StrictMode;
 import android.support.v7.app.ActionBarActivity;
@@ -7,7 +9,11 @@ import android.os.Bundle;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
+import android.widget.AdapterView;
+import android.widget.EditText;
 import android.widget.ListView;
+import android.widget.TextView;
 
 import org.apache.http.HttpEntity;
 import org.apache.http.HttpResponse;
@@ -27,13 +33,23 @@ public class OrderActivity extends ActionBarActivity {
     //Explicit
     private FoodTABLE objFoodTABLE;
     private String[] strListFood, strListPrice;
+    private TextView txtShowOffiecer;
+    private EditText edtDesk;
+    private String strMyOfficer, strMyDesk, strMyFood, strItem;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_order);
 
+        //Bind Widget
+        bindWidget();
+
         objFoodTABLE = new FoodTABLE(this);
+
+        //setup Text Show Officer
+        setUpTxtShowOfficer();
+
 
         //Synchronize JSON to SQLite
         synchronizeJSONtoFood();
@@ -44,7 +60,19 @@ public class OrderActivity extends ActionBarActivity {
         //Create ListView
         createListView();
 
+
+
     }   // onCreate
+
+    private void setUpTxtShowOfficer() {
+        strMyOfficer = getIntent().getExtras().getString("Name");
+        txtShowOffiecer.setText(strMyOfficer);
+    }
+
+    private void bindWidget() {
+        txtShowOffiecer = (TextView) findViewById(R.id.txtShowOfficer);
+        edtDesk = (EditText) findViewById(R.id.edtDesk);
+    }   // bindWidget
 
     private void createListView() {
 
@@ -57,7 +85,77 @@ public class OrderActivity extends ActionBarActivity {
         ListView objListView = (ListView) findViewById(R.id.foodlistView);
         objListView.setAdapter(objMyadapter);
 
+        //Active Click
+        objListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+
+                //Check Zero
+                strMyDesk = edtDesk.getText().toString().trim();
+                if (strMyDesk.equals("")) {
+                    MyAlertDialog objMyAlertDialog = new MyAlertDialog();
+                    objMyAlertDialog.errorDialog(OrderActivity.this, "Where You Table ?", "Please Fill Table");
+                } else {
+                    strMyFood = strListFood[position];
+
+
+                    //Show Choose iTem
+                    showChooseItem();
+
+                }   // if
+
+            }   // event
+        });
+
     }   // createListView
+
+    private void showChooseItem() {
+
+        CharSequence[] charItem = {"1 จาน", "2 จาน", "3 จาน", "4 จาน", "5 จาน"};
+
+        AlertDialog.Builder objBuilder = new AlertDialog.Builder(this);
+        objBuilder.setIcon(R.drawable.icon_question);
+        objBuilder.setTitle("Choose Item ?");
+        objBuilder.setCancelable(false);
+        objBuilder.setSingleChoiceItems(charItem, -1, new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+
+                switch (which) {
+                    case 0:
+                        strItem = "1";
+                        break;
+                    case 1:
+                        strItem = "2";
+                        break;
+                    case 2:
+                        strItem = "3";
+                        break;
+                    case 3:
+                        strItem = "4";
+                        break;
+                    case 4:
+                        strItem = "5";
+                        break;
+                }   // switch
+
+                dialog.dismiss();
+
+                checkLog();
+
+            }
+        });
+        AlertDialog obAlertDialog = objBuilder.create();
+        obAlertDialog.show();
+
+    }   // shwoChooseItem
+
+    private void checkLog() {
+        Log.d("order", "Officer ==> " + strMyOfficer);
+        Log.d("order", "Desk ==> " + strMyDesk);
+        Log.d("order", "Food ==> " + strMyFood);
+        Log.d("order", "Item ==> " + strItem);
+    }   // checkLog
 
     private void setupAllArray() {
 

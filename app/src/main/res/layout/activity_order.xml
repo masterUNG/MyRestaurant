@@ -20,4 +20,12 @@
         android:id="@+id/foodlistView"
         android:layout_below="@+id/txtShowOfficer"
         android:layout_marginTop="15dp" />
+
+    <EditText
+        android:layout_width="80dp"
+        android:layout_height="wrap_content"
+        android:id="@+id/edtDesk"
+        android:layout_toRightOf="@+id/txtShowOfficer"
+        android:layout_marginLeft="20dp"
+        android:hint="Table :" />
 </RelativeLayout>
